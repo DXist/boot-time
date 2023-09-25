@@ -1,0 +1,18 @@
+[package]
+name = "boot-time"
+description = "Monotonic time that takes into account time a system was suspended (if the system supports this)"
+version = "0.1.0"
+authors = ["Rinat Shigapov <rinatshigapov@gmail.com>"]
+edition = "2021"
+readme = "README.md"
+repository = "https://github.com/DXist/boot-time"
+license = "Apache-2.0"
+keywords = ["time", "monotonic", "duration"]
+categories = ["date-and-time"]
+
+[dependencies]
+cfg-if = "1"
+
+# Unix-specific dependencies
+[target.'cfg(unix)'.dependencies]
+libc = "0.2"
