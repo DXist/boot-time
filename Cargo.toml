@@ -6,7 +6,7 @@ authors = ["Rinat Shigapov <rinatshigapov@gmail.com>"]
 edition = "2021"
 readme = "README.md"
 repository = "https://github.com/DXist/boot-time"
-license = "Apache-2.0"
+license = "MIT"
 keywords = ["time", "monotonic", "duration"]
 categories = ["date-and-time"]
 
