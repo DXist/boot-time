@@ -1,7 +1,7 @@
 [package]
 name = "boot-time"
 description = "Monotonic time that takes into account time a system was suspended (if the system supports this)"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Rinat Shigapov <rinatshigapov@gmail.com>"]
 edition = "2021"
 readme = "README.md"
