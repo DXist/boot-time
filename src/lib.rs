@@ -1,14 +1,20 @@
 //! Temporal quantification that takes into account the time a system spent suspended.
 //!
-//! Note: Some systems like FreeBSD and AIX don't support CLOCK_BOOTIME. For compatibility CLOCK_MONOTONIC is used as a fallback.
+//! Note: Some systems like FreeBSD, DragonFlyBSD, NetBSD, AIX, Fuchsia,
+//! Emscripten don't support CLOCK_BOOTIME.
 //!
-//! For unsupported platforms `std::time::Instant` is just reexported.
+//! For compatibility CLOCK_MONOTONIC is used as a fallback.
+//!
+//! Windows QueryPerformanceCounter includes suspended time.  So for Windows and
+//! unsupported platforms `std::time::Instant` is just reexported.
 //!
 //! # Examples
 //!
 //! Using [`Instant`] to calculate how long a function took to run:
 //!
 //! ```ignore (incomplete)
+//! use boot_time::Instant;
+//!
 //! let now = Instant::now();
 //!
 //! // Calling a slow function, it may take a while

@@ -66,8 +66,7 @@ use crate::sys;
 ///
 /// |  Platform                         |               System call                                            |
 /// |-----------------------------------|----------------------------------------------------------------------|
-/// | UNIX (Linux/L4Re/Emscripten/      |                                                                      |
-/// |       Android/Fuchsia/openBSD)    | [clock_gettime (Monotonic Clock with CLOCK_BOOTTIME source)]         |
+/// | UNIX (Linux/L4Re/Android/openBSD) | [clock_gettime (Monotonic Clock with CLOCK_BOOTTIME source)]         |
 /// | UNIX (other)                      | [clock_gettime (Monotonic Clock with CLOCK_MONOTONIC source)]        |
 /// | Darwin                            | [mach_continuous_time]                                               |
 /// | Windows                           | [QueryPerformanceCounter]                                                                    |

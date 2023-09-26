@@ -328,8 +328,6 @@ mod inner {
                     target_os = "linux",
                     target_os = "l4re",
                     target_os = "android",
-                    target_os = "emscripten",
-                    target_os = "fuchsia",
                     target_os = "openbsd",
                 ))] {
                     #[allow(non_upper_case_globals)]
