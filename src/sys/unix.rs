@@ -370,29 +370,37 @@ mod inner {
 
     impl Timespec {
         pub fn now(clock: libc::clockid_t) -> Timespec {
-            // Try to use 64-bit time in preparation for Y2038.
-            #[cfg(all(
-                target_os = "linux",
-                target_env = "gnu",
-                target_pointer_width = "32",
-                not(target_arch = "riscv32")
-            ))]
-            {
-                use crate::sys::weak::weak;
-
-                // __clock_gettime64 was added to 32-bit arches in glibc 2.34,
-                // and it handles both vDSO calls and ENOSYS fallbacks itself.
-                weak!(fn __clock_gettime64(libc::clockid_t, *mut super::__timespec64) -> libc::c_int);
-
-                if let Some(clock_gettime64) = __clock_gettime64.get() {
-                    let mut t = MaybeUninit::uninit();
-                    cvt(unsafe { clock_gettime64(clock, t.as_mut_ptr()) }).unwrap();
-                    return Timespec::from(unsafe { t.assume_init() });
+            let mut t = MaybeUninit::uninit();
+            cfg_if::cfg_if! {
+                // Try to use 64-bit time in preparation for Y2038.
+                if #[cfg(all(
+                    target_os = "linux",
+                    target_env = "gnu",
+                    target_pointer_width = "32",
+                    not(target_arch = "riscv32")
+                ))]
+                {
+                    // SAFETY: These declarations must match the definitions in the system's C library (glibc).
+                    // 1. `timespec64` is defined with a 64-bit `tv_sec` to match the `__clock_gettime64`
+                    //    ABI on 32-bit systems (glibc 2.34+).
+                    // 2. The function signature and symbol name `__clock_gettime64` are verified to exist
+                    //    in the target environment's libc.
+                    // 3. The `clock_id` and pointer usage follow the documented POSIX/glibc requirements.
+                    unsafe extern "C" {
+                        /// Links to the 64-bit time function in glibc.
+                        ///
+                        /// __clock_gettime64 was added to 32-bit arches in glibc 2.34,
+                        /// and it handles both vDSO calls and ENOSYS fallbacks itself.
+                        ///
+                        /// # Safety
+                        /// The caller must ensure `tp` points to a valid, aligned `timespec64` struct.
+                        fn __clock_gettime64(clock_id: i32, tp: *mut __timespec64) -> i32;
+                    }
+                    cvt(unsafe { __clock_gettime64(clock, t.as_mut_ptr()) }).unwrap();
+                } else {
+                    cvt(unsafe { libc::clock_gettime(clock, t.as_mut_ptr()) }).unwrap();
                 }
             }
-
-            let mut t = MaybeUninit::uninit();
-            cvt(unsafe { libc::clock_gettime(clock, t.as_mut_ptr()) }).unwrap();
             Timespec::from(unsafe { t.assume_init() })
         }
     }
